@@ -1,4 +1,4 @@
-package rocha.andre.cloudvendor.domain.Vendor.UseCase;
+package rocha.andre.cloudvendor.domain.Vendor;
 
 import rocha.andre.cloudvendor.domain.User.User;
 import rocha.andre.cloudvendor.domain.Vendor.Vendor;

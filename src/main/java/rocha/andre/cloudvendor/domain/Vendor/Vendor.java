@@ -24,7 +24,6 @@ public class Vendor {
     private String state;
 
     public Vendor(VendorDto data) {
-        this.id = data.id();
         this.name = data.name();
         this.phone = data.phone();
         this.street = data.street();

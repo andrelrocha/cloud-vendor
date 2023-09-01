@@ -2,6 +2,7 @@ package rocha.andre.cloudvendor.domain.Vendor.UseCase;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import rocha.andre.cloudvendor.domain.Vendor.VendorDtoReturn;
 import rocha.andre.cloudvendor.domain.Vendor.VendorRepository;
 import rocha.andre.cloudvendor.infra.exceptions.ValidationException;
 
