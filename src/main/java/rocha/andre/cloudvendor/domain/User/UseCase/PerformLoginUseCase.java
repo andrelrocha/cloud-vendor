@@ -12,6 +12,7 @@ import rocha.andre.cloudvendor.infra.security.TokenService;
 
 @Component
 public class PerformLoginUseCase {
+
     @Autowired
     private AuthenticationManager manager;
     @Autowired
