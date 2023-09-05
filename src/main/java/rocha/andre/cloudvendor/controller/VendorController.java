@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import rocha.andre.cloudvendor.domain.Vendor.UseCase.CreateVendorUseCase;
+import rocha.andre.cloudvendor.domain.Vendor.UseCase.DeleteVendorUseCase;
 import rocha.andre.cloudvendor.domain.Vendor.UseCase.GetVendorByIdUseCase;
 import rocha.andre.cloudvendor.domain.Vendor.UseCase.UpdateVendorUseCase;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDto;
@@ -23,6 +24,8 @@ public class VendorController {
     private CreateVendorUseCase createVendorUseCase;
     @Autowired
     private UpdateVendorUseCase updateVendorUseCase;
+    @Autowired
+    private DeleteVendorUseCase deleteVendorUseCase;
 
     @GetMapping("/{id}")
     public ResponseEntity getVendorDetails(@PathVariable Long id) {
@@ -42,5 +45,12 @@ public class VendorController {
     public ResponseEntity updateVendor(@RequestBody @Valid VendorUpdateDto data, @PathVariable Long id) {
         var updatedVendor = updateVendorUseCase.updateVendor(data, id);
         return ResponseEntity.ok(updatedVendor);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity deleteVendor(@PathVariable Long id) {
+        deleteVendorUseCase.deleteVendor(id);
+        return ResponseEntity.noContent().build();
     }
 }
