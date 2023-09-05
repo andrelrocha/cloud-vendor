@@ -3,15 +3,16 @@ package rocha.andre.cloudvendor.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import rocha.andre.cloudvendor.domain.Vendor.UseCase.CreateVendorUseCase;
-import rocha.andre.cloudvendor.domain.Vendor.UseCase.DeleteVendorUseCase;
-import rocha.andre.cloudvendor.domain.Vendor.UseCase.GetVendorByIdUseCase;
-import rocha.andre.cloudvendor.domain.Vendor.UseCase.UpdateVendorUseCase;
+import rocha.andre.cloudvendor.domain.Vendor.UseCase.*;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDto;
+import rocha.andre.cloudvendor.domain.Vendor.VendorDtoReturn;
 import rocha.andre.cloudvendor.domain.Vendor.VendorUpdateDto;
 
 @RestController
@@ -20,6 +21,8 @@ import rocha.andre.cloudvendor.domain.Vendor.VendorUpdateDto;
 public class VendorController {
     @Autowired
     private GetVendorByIdUseCase getVendorByIdUseCase;
+    @Autowired
+    private GetAllVendorUseCase getAllVendorUseCase;
     @Autowired
     private CreateVendorUseCase createVendorUseCase;
     @Autowired
@@ -31,6 +34,12 @@ public class VendorController {
     public ResponseEntity getVendorDetails(@PathVariable Long id) {
         var vendorById = getVendorByIdUseCase.getVendorById(id);
         return ResponseEntity.ok().body(vendorById);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<VendorDtoReturn>> getAllVendors(@PageableDefault(size = 5, sort = {"name"}) Pageable pagination) {
+        Page <VendorDtoReturn> allVendors = getAllVendorUseCase.getAllVendors(pagination);
+        return ResponseEntity.ok(allVendors);
     }
 
     @PostMapping
