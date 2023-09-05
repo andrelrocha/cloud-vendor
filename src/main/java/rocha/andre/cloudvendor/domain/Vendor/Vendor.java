@@ -100,4 +100,22 @@ public class Vendor {
                 ", state='" + state + '\'' +
                 '}';
     }
+
+    public void updateVendor(VendorUpdateDto data) {
+        if (data.phone() != null) {
+            this.phone = data.phone();
+        }
+        if (data.street() != null) {
+            this.street = data.street();
+        }
+        if (data.complement() != null) {
+            this.complement = data.complement();
+        }
+        if (data.city() != null) {
+            this.city = data.city();
+        }
+        if (data.state() != null) {
+            this.state = data.state();
+        }
+    }
 }
