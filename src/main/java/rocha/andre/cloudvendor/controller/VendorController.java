@@ -14,52 +14,45 @@ import rocha.andre.cloudvendor.domain.Vendor.UseCase.*;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDto;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDtoReturn;
 import rocha.andre.cloudvendor.domain.Vendor.VendorUpdateDto;
+import rocha.andre.cloudvendor.service.VendorService;
 
 @RestController
 @RequestMapping("/vendor")
 @SecurityRequirement(name = "bearer-key")
 public class VendorController {
     @Autowired
-    private GetVendorByIdUseCase getVendorByIdUseCase;
-    @Autowired
-    private GetAllVendorUseCase getAllVendorUseCase;
-    @Autowired
-    private CreateVendorUseCase createVendorUseCase;
-    @Autowired
-    private UpdateVendorUseCase updateVendorUseCase;
-    @Autowired
-    private DeleteVendorUseCase deleteVendorUseCase;
+    private VendorService vendorService;
 
     @GetMapping("/{id}")
     public ResponseEntity getVendorDetails(@PathVariable Long id) {
-        var vendorById = getVendorByIdUseCase.getVendorById(id);
+        var vendorById = vendorService.getVendorById(id);
         return ResponseEntity.ok().body(vendorById);
     }
 
     @GetMapping
     public ResponseEntity<Page<VendorDtoReturn>> getAllVendors(@PageableDefault(size = 5, sort = {"name"}) Pageable pagination) {
-        Page <VendorDtoReturn> allVendors = getAllVendorUseCase.getAllVendors(pagination);
+        Page <VendorDtoReturn> allVendors = vendorService.getAllVendors(pagination);
         return ResponseEntity.ok(allVendors);
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity createVendor(@RequestBody @Valid VendorDto data) {
-        var newVendor = createVendorUseCase.createvendor(data);
+        var newVendor = vendorService.createvendor(data);
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(newVendor);
     }
 
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity updateVendor(@RequestBody @Valid VendorUpdateDto data, @PathVariable Long id) {
-        var updatedVendor = updateVendorUseCase.updateVendor(data, id);
+        var updatedVendor = vendorService.updateVendor(data, id);
         return ResponseEntity.ok(updatedVendor);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity deleteVendor(@PathVariable Long id) {
-        deleteVendorUseCase.deleteVendor(id);
+        vendorService.deleteVendor(id);
         return ResponseEntity.noContent().build();
     }
 }
