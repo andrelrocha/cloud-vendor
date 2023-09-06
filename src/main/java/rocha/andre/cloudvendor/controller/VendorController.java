@@ -6,14 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import rocha.andre.cloudvendor.domain.Vendor.UseCase.*;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDto;
 import rocha.andre.cloudvendor.domain.Vendor.VendorDtoReturn;
 import rocha.andre.cloudvendor.domain.Vendor.VendorUpdateDto;
+import rocha.andre.cloudvendor.response.ResponseHandler;
 import rocha.andre.cloudvendor.service.VendorService;
 
 @RestController
@@ -24,9 +25,10 @@ public class VendorController {
     private VendorService vendorService;
 
     @GetMapping("/{id}")
-    public ResponseEntity getVendorDetails(@PathVariable Long id) {
+    public ResponseEntity<Object> getVendorDetails(@PathVariable Long id) {
         var vendorById = vendorService.getVendorById(id);
-        return ResponseEntity.ok().body(vendorById);
+        var response = ResponseHandler.responseBuilder("Requested Vendor Details are given here", HttpStatus.OK, vendorById);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping
@@ -37,16 +39,18 @@ public class VendorController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity createVendor(@RequestBody @Valid VendorDto data) {
+    public ResponseEntity<Object> createVendor(@RequestBody @Valid VendorDto data) {
         var newVendor = vendorService.createvendor(data);
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(newVendor);
+        var response = ResponseHandler.responseBuilder("Vendor created successfully", HttpStatus.CREATED, newVendor);
+        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(response);
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity updateVendor(@RequestBody @Valid VendorUpdateDto data, @PathVariable Long id) {
+    public ResponseEntity<Object> updateVendor(@RequestBody @Valid VendorUpdateDto data, @PathVariable Long id) {
         var updatedVendor = vendorService.updateVendor(data, id);
-        return ResponseEntity.ok(updatedVendor);
+        var response = ResponseHandler.responseBuilder("Vendor updated successfully", HttpStatus.OK, updatedVendor);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
