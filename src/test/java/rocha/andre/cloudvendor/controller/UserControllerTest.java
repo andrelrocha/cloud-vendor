@@ -51,10 +51,12 @@ public class UserControllerTest {
     @Test
     @DisplayName("It should return code 200 after creating a user, and return its info")
     void createUserScenario1() throws Exception {
+        //given
         UserDtoReturn expectedUserDtoReturn = new UserDtoReturn(1L, "andre@email.com");
         when(createUserUseCase.createUser(any()))
                 .thenReturn(expectedUserDtoReturn);
 
+        //when
         var response = mvc.perform(
                 post("/login/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,12 +73,14 @@ public class UserControllerTest {
                 expectedUserDtoReturn
         ).getJson();
 
+        //then
         assertThat(response.getContentAsString()).isEqualTo(expectedJson);
     }
 
     @Test
     @DisplayName("It should return a valid JWT token after login")
     void performLoginScenario1() throws Exception {
+        //given
         var user = new User(1L,"andre@email.com", "123");
         var expectedJwt = tokenService.generateJwtToken(user);
         var tokenJWT = new TokenJwtDto(expectedJwt);
@@ -84,6 +88,10 @@ public class UserControllerTest {
         when(performLoginUseCase.performLogin(any()))
                 .thenReturn(tokenJWT);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String tokenJson = objectMapper.writeValueAsString(tokenJWT);
+
+        //when
         var response = mvc.perform(
                         post("/login")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,15 +102,14 @@ public class UserControllerTest {
                 .andReturn()
                 .getResponse();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String tokenJson = objectMapper.writeValueAsString(tokenJWT);
-
+        //then
         assertThat(response.getContentAsString()).isEqualTo(tokenJson);
     }
 
     @Test
     @DisplayName("It should return a valid login within the JWT token after login")
     void performLoginScenario2() throws Exception {
+        //given
         var user = new User(1L,"andre@email.com", "123");
         var expectedJwt = tokenService.generateJwtToken(user);
         var tokenJWT = new TokenJwtDto(expectedJwt);
@@ -113,6 +120,7 @@ public class UserControllerTest {
         when(performLoginUseCase.performLogin(any()))
                 .thenReturn(tokenJWT);
 
+        //when
         var response = mvc.perform(
                         post("/login")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -126,6 +134,7 @@ public class UserControllerTest {
         var expectedLogin = user.getLogin();
         var actualLogin = tokenService.getSubject(response.getContentAsString());
 
+        //then
         assertThat(actualLogin).isEqualTo(expectedLogin);
     }
 }

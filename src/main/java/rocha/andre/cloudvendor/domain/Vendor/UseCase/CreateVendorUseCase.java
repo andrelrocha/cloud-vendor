@@ -14,10 +14,12 @@ public class CreateVendorUseCase {
     private VendorRepository vendorRepository;
 
     public VendorDtoReturn createvendor(VendorDto data) {
-        boolean vendorExists = vendorRepository.existsByName(data.name());
+        var vendor = vendorRepository.findByNameAndCity(data.name(), data.city());
 
-        if (vendorExists) {
-            throw new ValidationException("Vendor with name " + data.name() + " already exists");
+        //boolean vendorExists = vendorRepository.existsByName(data.name());
+
+        if (!vendor.isEmpty()) {
+            throw new ValidationException("Vendor with name " + data.name() + " located in " + data.city() + " already exists");
         }
 
         Vendor newVendor = new Vendor(data);
