@@ -31,7 +31,33 @@ public class VendorRepositoryTest {
         var vendorWithSameStreetAndName = vendorRepository.findByNameAndCity("andre", "fortaleza");
 
         //then
-        assertNotNull(vendorWithSameStreetAndName);
+        assertThat(vendorWithSameStreetAndName).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("Check if returns null when giving same name but different city")
+    void vendorRepositoryCase2() {
+        //given
+        var vendor = createVendor("andre", "rua ruosa", "fortaleza");
+
+        //when
+        var vendorWithSameStreetAndName = vendorRepository.findByNameAndCity("andre", "cidade");
+
+        //then
+        assertThat(vendorWithSameStreetAndName).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Check if returns null when giving same city but different name")
+    void vendorRepositoryCase3() {
+        //given
+        var vendor = createVendor("andre", "rua ruosa", "fortaleza");
+
+        //when
+        var vendorWithSameStreetAndName = vendorRepository.findByNameAndCity("fornecedor", "fortaleza");
+
+        //then
+        assertThat(vendorWithSameStreetAndName).isEmpty();
     }
 
     ////
