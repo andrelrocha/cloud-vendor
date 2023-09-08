@@ -24,6 +24,7 @@ import rocha.andre.cloudvendor.infra.security.TokenService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -43,7 +44,7 @@ public class UserControllerTest {
     @MockBean
     private PerformLoginUseCase performLoginUseCase;
 
-    @Autowired
+    @MockBean
     private TokenService tokenService;
 
 
@@ -97,5 +98,34 @@ public class UserControllerTest {
         String tokenJson = objectMapper.writeValueAsString(tokenJWT);
 
         assertThat(response.getContentAsString()).isEqualTo(tokenJson);
+    }
+
+    @Test
+    @DisplayName("It should return a valid login within the JWT token after login")
+    void performLoginScenario2() throws Exception {
+        var user = new User(1L,"andre@email.com", "123");
+        var expectedJwt = tokenService.generateJwtToken(user);
+        var tokenJWT = new TokenJwtDto(expectedJwt);
+
+        when(tokenService.getSubject(anyString()))
+                .thenReturn(user.getLogin());
+
+        when(performLoginUseCase.performLogin(any()))
+                .thenReturn(tokenJWT);
+
+        var response = mvc.perform(
+                        post("/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(userDtoJacksonTester.write(
+                                                new UserDto("andre@email.com", "123")
+                                        ).getJson()
+                                ))
+                .andReturn()
+                .getResponse();
+
+        var expectedLogin = user.getLogin();
+        var actualLogin = tokenService.getSubject(response.getContentAsString());
+
+        assertThat(actualLogin).isEqualTo(expectedLogin);
     }
 }
